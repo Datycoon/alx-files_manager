@@ -47,6 +47,7 @@ class UsersController {
         return response.status(401).json({ error: 'Unauthorized' });
       }
       const user = await dbClient.getUser({ _id: ObjectId(userID.toString()) }); // Convert userID to string before passing it to ObjectId
+      console.log('USER IN GET ME', user);
       return response.json({ id: user._id, email: user.email });
     } catch (error) {
       console.log(error);
