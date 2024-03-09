@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import sha1 from 'sha1'; // Import sha1 library
+import sha1 from 'sha1'; // Corrected import statement
 
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
