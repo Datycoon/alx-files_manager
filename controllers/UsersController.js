@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { ObjectId } from 'mongodb'; // Import ObjectId from 'mongodb'
+import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
@@ -46,7 +46,7 @@ class UsersController {
       if (!userID) {
         return response.status(401).json({ error: 'Unauthorized' });
       }
-      const user = await dbClient.getUser({ _id: ObjectId(userID) }); // Correct usage of ObjectId
+      const user = await dbClient.getUser({ _id: ObjectId(userID.toString()) }); // Convert userID to string before passing it to ObjectId
       return response.json({ id: user._id, email: user.email });
     } catch (error) {
       console.log(error);
