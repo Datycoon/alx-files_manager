@@ -1,3 +1,4 @@
+import sha1 from 'sha1';
 import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
@@ -36,14 +37,17 @@ class UsersController {
   static async getMe(request, response) {
     try {
       const userToken = request.header('X-Token');
+      if (!userToken) {
+        return response.status(401).json({ error: 'Unauthorized' });
+      }
       const authKey = `auth_${userToken}`;
       const userID = await redisClient.get(authKey);
       console.log('USER KEY GET ME', userID);
       if (!userID) {
         return response.status(401).json({ error: 'Unauthorized' });
       }
-      const user = await dbClient.getUser({ _id: ObjectId(userID.toString()) }); // Convert userID to string before passing it to ObjectId
-      console.log('USER IN GET ME', user); // Added logging here
+      const user = await dbClient.getUser({ _id: ObjectId(userID) });
+      console.log('USER GET ME', user);
       if (!user) {
         return response.status(404).json({ error: 'User not found' });
       }
