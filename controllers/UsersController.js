@@ -21,13 +21,12 @@ class UsersController {
 
       if (user1) {
         return response.status(400).json({ error: 'Already exist' });
-      } else {
-        collection.insertOne({ email, password: hashPwd });
-        const newUser = await collection.findOne(
-          { email }, { projection: { email: 1 } }
-        );
-        return response.status(201).json({ id: newUser._id, email: newUser.email });
       }
+      collection.insertOne({ email, password: hashPwd });
+      const newUser = await collection.findOne(
+        { email }, { projection: { email: 1 } },
+      );
+      return response.status(201).json({ id: newUser._id, email: newUser.email });
     } catch (error) {
       console.log(error);
       return response.status(500).json({ error: 'Server error' });
@@ -60,4 +59,3 @@ class UsersController {
 }
 
 export default UsersController;
-
