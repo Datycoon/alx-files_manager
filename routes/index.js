@@ -1,12 +1,25 @@
-import express from 'express';
+/**
+ * Assign handlers to routes
+ */
+import { Router } from 'express';
 import AppController from '../controllers/AppController';
+import AuthController from '../controllers/AuthController';
+import UserController from '../controllers/UsersController';
+import FilesController from '../controllers/FilesController';
 
-const app = express();
+const router = Router();
 
-app.get('/', (req, res) => { res.send('Hello World!\n'); });
+router.get('/stats', AppController.getStats);
+router.get('/status', AppController.getStatus);
+router.get('/connect', AuthController.getConnect);
+router.get('/disconnect', AuthController.getDisconnect);
+router.post('/users', UserController.postNew);
+router.get('/users/me', UserController.getMe);
+router.post('/files', FilesController.postUpload);
+router.get('/files/:id', FilesController.getShow);
+router.get('/files/', FilesController.getIndex);
+router.put('/files/:id/publish', FilesController.putPublish);
+router.put('/files/:id/unpublish', FilesController.putUnpublish);
+router.get('/files/:id/data', FilesController.getFile);
 
-app.get('/status', (req, res) => { res.send(AppController.getStatus()); });
-
-app.get('/stats', (req, res) => { res.send(AppController.getStats()); });
-
-module.exports = app;
+export default router;
