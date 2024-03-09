@@ -1,4 +1,3 @@
-import sha1 from 'sha1';
 import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
@@ -21,16 +20,13 @@ class UsersController {
 
       if (user1) {
         return response.status(400).json({ error: 'Already exist' });
+      } else {
+        collection.insertOne({ email, password: hashPwd });
+        const newUser = await collection.findOne(
+          { email }, { projection: { email: 1 } }
+        );
+        return response.status(201).json({ id: newUser._id, email: newUser.email });
       }
-
-      await collection.insertOne({ email, password: hashPwd });
-      const newUser = await collection.findOne(
-        { email },
-        { projection: { email: 1 } }
-      );
-      return response
-        .status(201)
-        .json({ id: newUser._id, email: newUser.email });
     } catch (error) {
       console.log(error);
       return response.status(500).json({ error: 'Server error' });
@@ -47,7 +43,10 @@ class UsersController {
         return response.status(401).json({ error: 'Unauthorized' });
       }
       const user = await dbClient.getUser({ _id: ObjectId(userID.toString()) }); // Convert userID to string before passing it to ObjectId
-      console.log('USER IN GET ME', user);
+      console.log('USER IN GET ME', user); // Added logging here
+      if (!user) {
+        return response.status(404).json({ error: 'User not found' });
+      }
       return response.json({ id: user._id, email: user.email });
     } catch (error) {
       console.log(error);
